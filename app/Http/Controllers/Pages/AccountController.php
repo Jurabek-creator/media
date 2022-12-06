@@ -89,14 +89,34 @@ class AccountController extends Controller
     }
 
     public function edit($id){
-
+        $account = Account::find($id);
+        return view('pages.account.edit',[
+            'account' => $account,
+        ]);
     }
 
     public function update(Request $request, $id){
+        $this->validate($request,[
+            'number' => "required|unique:accounts,number,$id",
+            'name' => 'required',
+            'inn' => 'required',
+            'filial' => 'required',
+            'percentage' => 'required',
+        ]);
+        $account = Account::find($id);
+        $account->number = $request->number;
+        $account->name = $request->name;
+        $account->inn = $request->inn;
+        $account->filial = $request->filial;
+        $account->percentage = $request->percentage;
+        $account->update();
+        return redirect()->route('accountIndex')->with('success', 'Account updated successfully');
 
     }
 
     public function destroy($id){
-
+        $account = Account::find($id);
+        $account->delete();
+        return redirect()->route('accountIndex')->with('success', 'Account deleted successfully');
     }
 }
